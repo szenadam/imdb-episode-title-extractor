@@ -1,5 +1,6 @@
 import sys
 import requests
+import json
 
 from bs4 import BeautifulSoup
 
@@ -7,6 +8,8 @@ from bs4 import BeautifulSoup
 def main():
     series_id = 'foobar'
     num_of_seasons = 16 + 1
+
+    result = list()
 
     for i in range(1, num_of_seasons):
         url = f"https://www.imdb.com/title/{series_id}/episodes?season={i}"
@@ -25,10 +28,10 @@ def main():
             print("Length mismatch")
             sys.exit(-1)
 
-        result = dict(zip(episodes, titles))
+        season = dict(zip(episodes, titles))
+        result.append(season)
 
-        print(result)
-    
+    print(json.dumps(result, indent=2))
     return 0
 
 
@@ -48,6 +51,14 @@ def get_titles(soup):
     for t in titles:
         values.append(t.get_text())
     return values
+
+def normalize_keys():
+    """ Replace spaces and special characters in dict keys. """
+    pass
+
+def normalize_values():
+    """ Replace spaces and special characters in dict values. """
+    pass
 
 
 if __name__ == "__main__":
