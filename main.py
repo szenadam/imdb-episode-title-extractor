@@ -1,22 +1,26 @@
 import sys
 import requests
 import json
+import logging
 
 from bs4 import BeautifulSoup
 
 
 def main():
-    series_id = 'foobar'
-    num_of_seasons = 16 + 1
+    logging.basicConfig(level=logging.INFO)
+    title = 'FamilyGuy'
+    series_id = 'tt0182576'
+    num_of_seasons = 21 + 1
 
-    result = list()
+    episodes_list = list()
 
     for i in range(1, num_of_seasons):
+        logging.info(f'Getting season {i} of {title}')
         url = f"https://www.imdb.com/title/{series_id}/episodes?season={i}"
         resp = requests.get(url)
 
         if resp.status_code == 404:
-            print("Series not found")
+            logging.error("Series not found")
             sys.exit(-1)
 
         soup = BeautifulSoup(resp.text, "html.parser")
@@ -25,13 +29,18 @@ def main():
         titles = get_titles(soup)
 
         if len(episodes) != len(titles):
-            print("Length mismatch")
+            logging.error("Length mismatch")
             sys.exit(-1)
 
         season = dict(zip(episodes, titles))
-        result.append(season)
+        episodes_list.append(season)
+    result = dict()
+    result["title"] = title
+    result["episodes"] = episodes_list
 
-    print(json.dumps(result, indent=2))
+    logging.info(json.dumps(result, indent=2))
+    with open(f'{series_id}.json', "w", encoding='utf-8') as f:
+        f.write(json.dumps(result, indent=2))
     return 0
 
 
