@@ -10,7 +10,7 @@ Quickly extract a list of key-value pairs of episodes and titles.
 ## Usage
 
 ```sh
-python main.py [-h] -n NAME -i ID -s SEASONS
+python main.py [-h] -n NAME -i ID -s SEASONS [--sanitize]
 
 Extract episode titles for a series from IMDB.
 
@@ -20,4 +20,5 @@ optional arguments:
   -i ID, --id ID        ID used in IMDB for the series. Get it from URL.
   -s SEASONS, --seasons SEASONS
                         Number of seasons for the series.
+  --sanitize            Sanitize title. Remove spaces and non ASCII characters.
 ```
