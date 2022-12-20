@@ -46,7 +46,8 @@ def main():
     result["episodes"] = episodes_list
 
     logging.info(json.dumps(result, indent=2))
-    with open(f'{series_id}.json', "w", encoding='utf-8') as f:
+    out_file_name = f"./out/{title}-{series_id}-episodes-{datetime.date.today()}.json"
+    with open(out_file_name, "w", encoding='utf-8') as f:
         f.write(json.dumps(result, indent=2))
     return 0
 
@@ -56,7 +57,7 @@ def get_episodes(soup):
     ep_numbers = soup.select("div.list_item div.image div.hover-over-image div")
     keys = list()
     for e in ep_numbers:
-        keys.append(e.get_text())
+        keys.append(e.get_text().replace(", ", ""))
     return keys
 
 
@@ -68,9 +69,11 @@ def get_titles(soup):
         values.append(t.get_text())
     return values
 
+
 def normalize_keys():
     """ Replace spaces and special characters in dict keys. """
     pass
+
 
 def normalize_values():
     """ Replace spaces and special characters in dict values. """
