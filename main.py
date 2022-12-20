@@ -38,6 +38,7 @@ def parse_arguments():
 def extract_data(title, series_id, num_of_seasons, should_sanitize):
     """ Loop through every season of the series and extract season/episode number and title. """
     episodes_list = list()
+    total = 0
     for i in range(1, num_of_seasons):
         logging.info(f'Getting season {i} of {title}')
         url = f"https://www.imdb.com/title/{series_id}/episodes?season={i}"
@@ -55,11 +56,12 @@ def extract_data(title, series_id, num_of_seasons, should_sanitize):
         if len(episodes) != len(titles):
             logging.error("Length mismatch")
             sys.exit(-1)
-
+        total += len(episodes)
         season = dict(zip(episodes, titles))
         episodes_list.append(season)
     result = dict()
     result["title"] = title
+    result["total"] = total
     result["episodes"] = episodes_list
     return result
 
