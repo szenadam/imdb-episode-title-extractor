@@ -1,16 +1,23 @@
 import sys
-import requests
+import datetime
 import json
 import logging
+import argparse
+import requests
 
 from bs4 import BeautifulSoup
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-n", "--name", required=True)
+    parser.add_argument("-i", "--id", required=True)
+    parser.add_argument("-s", "--seasons", required=True, type=int)
+    args = parser.parse_args()
     logging.basicConfig(level=logging.INFO)
-    title = 'FamilyGuy'
-    series_id = 'tt0182576'
-    num_of_seasons = 21 + 1
+    title = args.name
+    series_id = args.id
+    num_of_seasons = int(args.seasons) + 1
 
     episodes_list = list()
 
