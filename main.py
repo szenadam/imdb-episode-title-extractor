@@ -9,10 +9,10 @@ from bs4 import BeautifulSoup
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-n", "--name", required=True)
-    parser.add_argument("-i", "--id", required=True)
-    parser.add_argument("-s", "--seasons", required=True, type=int)
+    parser = argparse.ArgumentParser(prog="EpisodeTitleExtractor", description="Extract episode titles for a series from IMDB.")
+    parser.add_argument("-n", "--name", required=True, help="Name of the series.")
+    parser.add_argument("-i", "--id", required=True, help="ID used in IMDB for the series. Get it from URL.")
+    parser.add_argument("-s", "--seasons", required=True, type=int, help="Number of seasons for the series.")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO)
     title = args.name
