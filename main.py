@@ -14,11 +14,13 @@ def main():
     parser.add_argument("-n", "--name", required=True, help="Name of the series.")
     parser.add_argument("-i", "--id", required=True, help="ID used in IMDB for the series. Get it from URL.")
     parser.add_argument("-s", "--seasons", required=True, type=int, help="Number of seasons for the series.")
+    parser.add_argument("--sanitize", action="store_true", help="Sanitize title. Remove spaces and non ASCII characters.")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s:%(message)s', datefmt="%Y-%m-%d %I:%M:%S")
     title = args.name
     series_id = args.id
     num_of_seasons = int(args.seasons) + 1
+    should_sanitize = args.sanitize
 
     episodes_list = list()
 
@@ -34,7 +36,7 @@ def main():
         soup = BeautifulSoup(resp.text, "html.parser")
 
         episodes = get_episodes(soup)
-        titles = get_titles(soup)
+        titles = get_titles(soup, should_sanitize)
 
         if len(episodes) != len(titles):
             logging.error("Length mismatch")
@@ -62,12 +64,15 @@ def get_episodes(soup):
     return keys
 
 
-def get_titles(soup):
+def get_titles(soup, should_sanitize):
     """ Get episode titles from page and return them in a list. """
     titles = soup.select("div.list_item div.info strong")
     values = list()
-    for t in titles:
-        values.append(t.get_text())
+    for title in titles:
+        title_text = title.get_text()
+        if (should_sanitize):
+            title_text = sanitize_title(title_text)
+        values.append(title_text)
     return values
 
 
@@ -80,6 +85,25 @@ def normalize_values():
     """ Replace spaces and special characters in dict values. """
     pass
 
+def sanitize_title(title):
+    result = title
+    replacement_pairs = [
+        (" ", "_"),
+        (",", ""),
+        ("'", ""),
+        ("#", ""),
+        ("?", ""),
+        ("!", ""),
+        ("&", "and"),
+        (".", ""),
+        ("(", ""),
+        (")", ""),
+        ("[", ""),
+        ("]", ""),
+    ]
+    for i in replacement_pairs:
+        result = result.replace(i[0], i[1])
+    return result
 
 if __name__ == "__main__":
     main()
